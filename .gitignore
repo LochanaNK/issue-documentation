@@ -1,0 +1,4 @@
+venv/
+input_docs/
+processed_docs/
+docs_db/

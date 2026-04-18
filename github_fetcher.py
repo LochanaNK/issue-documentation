@@ -23,7 +23,7 @@ def fetch_github_issues(output_dir="./input_docs"):
             issue_cmd = [
                 "gh", "issue", "list",
                 "--repo", repo_full_name,
-                "--state", "open",
+                "--state", "closed",
                 "--json", "number,title,body,url,createdAt,labels"
             ]
             

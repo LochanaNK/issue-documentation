@@ -1,4 +1,5 @@
 import hashlib
+import json
 import ollama
 import os
 import chromadb
@@ -12,27 +13,17 @@ collection = client.get_or_create_collection(name="project_docs")
 output_dir = "./processed_docs"
 os.makedirs(output_dir, exist_ok=True)
 
-MASTER_TEMPLATE = """
-# [PROJECT_ID] | Issue Resolution Log
-
-## 🛠 Summary
-- **Identifier:** [PROJECT_ID]
-- **Date Processed:** [DATE]
-- **Category:** [CATEGORY]
-
-## 🔍 The Problem
-> [PROBLEM DESCRIPTION]
-
-## 💡 Resolution
-### Root Cause
-- [ROOT CAUSE]
-
-### Implementation
-- [TECHNICAL STEPS TAKEN]
-
-## ✅ Verification
-- [HOW IT WAS TESTED]
-"""
+JSON_TEMPLATE = {
+    "identifier": "[PROJECT_ID]",
+    "date_processed": "[DATE]",
+    "category": "[CATEGORY]",
+    "problem_description": "[PROBLEM]",
+    "resolution": {
+        "root_cause": "[ROOT_CAUSE]",
+        "technical_steps": "[STEPS]",
+        "verification": "[TESTING]"
+    }
+}
 
 def get_file_hash(content):
     return hashlib.md5(content.encode('utf-8')).hexdigest()
@@ -63,42 +54,38 @@ def process_file(file_path):
         
         
         prompt = f"""
-        You are a technical documentation assistant. 
-        Analyze the 'Scattered Notes' below and map them EXACTLY into the provided 'Master Template'.
+        You are a technical data extractor. Extract information from 'SCATTERED NOTES' into the 'JSON TEMPLATE' structure.
         
         RULES:
-        1. Output ONLY the filled Markdown. 
-        2. Identify the project context from the 'SOURCE' line and use it to determine the CATEGORY in the template.
-        3. Do not include any introductory text, pleasantries, or summaries.
-        4. If information is missing for a section, write "Not specified".
-        5. Current Date is {datetime.now().strftime('%Y-%m-%d')}.
+        1. Output ONLY a valid JSON object. No markdown blocks, no '```json', no commentary.
+        2. Identify the project context from the 'SOURCE' line for the 'category'.
+        3. Use "Not specified" for missing fields.
+        4. Current Date: {datetime.now().strftime('%Y-%m-%d')}.
 
-        MASTER TEMPLATE:
-        {MASTER_TEMPLATE}
+        JSON TEMPLATE:
+        {json.dumps(JSON_TEMPLATE, indent=2)}
 
         SCATTERED NOTES:
         {raw_text}
-        
-        
         """
         
         try:
             response = ollama.generate(
             model='gemma4:e4b', 
             prompt=prompt,
-            options={'temperature': 0}
+            options={'temperature': 0, 'format': 'json'}
             )
             
-            clean_doc = response['response'].strip()
+            clean_doc = json.loads(response['response'].strip())
             
             file_name = os.path.basename(file_path)
-            output_path = os.path.join(output_dir, f"{file_name}_processed.md")
+            output_path = os.path.join(output_dir, f"{file_name}_processed.json")
             
             with open(output_path, 'w', encoding='utf-8') as out_f:
-                out_f.write(clean_doc)
+                json.dump(clean_doc, out_f, indent=4)
             
             collection.upsert(
-                documents=[clean_doc],
+                documents=[json.dumps(clean_doc)],
                 ids=[file_name],
                 metadatas=[{"source": file_path, "date": datetime.now().isoformat(), "hash": current_hash}]
             )

@@ -2,3 +2,6 @@ venv/
 input_docs/
 processed_docs/
 docs_db/
+.env
+_pycache__/
+*.pyc

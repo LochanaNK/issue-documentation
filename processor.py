@@ -4,6 +4,8 @@ import os
 import chromadb
 from datetime import datetime
 
+from github_fetcher import fetch_github_issues
+
 client = chromadb.PersistentClient(path="./docs_db")
 collection = client.get_or_create_collection(name="project_docs")
 
@@ -44,18 +46,20 @@ def process_file(file_path):
         current_hash = get_file_hash(raw_text)
         
         file_name = os.path.basename(file_path)
-    
+
+        
+        
         existing_doc = collection.get(ids=[file_name])
         if existing_doc['ids']:
             stored_hash = existing_doc['metadatas'][0].get('hash')
             if stored_hash == current_hash:
-                print(f"⏭️  Skipping: {file_name} (Content unchanged)")
+                print(f">>  Skipping: {file_name} (Content unchanged)")
                 return
             else:
-                print(f"🔄 Redoing: {file_name} (Updates detected)")
+                print(f"(<) Redoing: {file_name} (Updates detected)")
                 
         else:
-            print(f"🆕 Processing New File: {file_name}...")
+            print(f"++ Processing New File: {file_name}...")
         
         
         prompt = f"""
@@ -64,9 +68,10 @@ def process_file(file_path):
         
         RULES:
         1. Output ONLY the filled Markdown. 
-        2. Do not include any introductory text, pleasantries, or summaries.
-        3. If information is missing for a section, write "Not specified".
-        4. Current Date is {datetime.now().strftime('%Y-%m-%d')}.
+        2. Identify the project context from the 'SOURCE' line and use it to determine the CATEGORY in the template.
+        3. Do not include any introductory text, pleasantries, or summaries.
+        4. If information is missing for a section, write "Not specified".
+        5. Current Date is {datetime.now().strftime('%Y-%m-%d')}.
 
         MASTER TEMPLATE:
         {MASTER_TEMPLATE}
@@ -103,6 +108,7 @@ def process_file(file_path):
         
 doc_dir = "./input_docs"
 if os.path.exists(doc_dir):
+    fetch_github_issues(output_dir=doc_dir)
     for filename in os.listdir(doc_dir):
         if filename.endswith(('.txt', '.md')):
             process_file(os.path.join(doc_dir, filename))

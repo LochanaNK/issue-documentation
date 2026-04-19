@@ -44,13 +44,13 @@ def process_file(file_path):
         if existing_doc['ids']:
             stored_hash = existing_doc['metadatas'][0].get('hash')
             if stored_hash == current_hash:
-                print(f">>  Skipping: {file_name} (Content unchanged)")
+                print(f"❯❯❯❯  Skipping: {file_name} (Content unchanged)")
                 return
             else:
-                print(f"(<) Redoing: {file_name} (Updates detected)")
+                print(f"⟲  Redoing: {file_name} (Updates detected)")
                 
         else:
-            print(f"++ Processing New File: {file_name}...")
+            print(f"ⴵ  Processing New File: {file_name}...")
         
         
         prompt = f"""

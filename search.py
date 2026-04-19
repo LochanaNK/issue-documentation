@@ -3,7 +3,7 @@ import chromadb
 client  = chromadb.PersistentClient(path="./docs_db")
 collection = client.get_collection(name="project_docs")
 
-def search_issues(query_text: str, n_results: int=3, threshhold: float=1.0):
+def search_issues(query_text: str, n_results: int=3, threshhold: float=2.0):
     # query = input("Search issue logs for: ")
     if not query_text.strip():
         return []

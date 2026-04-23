@@ -76,8 +76,10 @@ def fetch_github_issues(output_dir="./input_docs"):
         duration = end_time - start_time
         
         total_issues_synced = sum(results)
-        print(f"\n⏱️  Time taken: {duration:.2f} seconds")
-        print(f"✅ Total issues synced across all repos: {total_issues_synced}\n")
+        print("\n" + "="*30)
+        print(f"⏱️  Time taken: {duration:.2f} seconds")
+        print(f"✅ Total issues synced across all repos: {total_issues_synced}")
+        print("="*30 + "\n")
 
     except subprocess.CalledProcessError as e:
         print(f"❌ CLI Error: {e.stderr}")

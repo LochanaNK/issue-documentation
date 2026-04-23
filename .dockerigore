@@ -1,0 +1,33 @@
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local Data & Databases (We use Docker Volumes for these)
+docs_db/
+input_docs/
+processed_docs/
+
+# Version Control
+.git/
+.gitignore
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Frontend (If in the same root)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+*.log

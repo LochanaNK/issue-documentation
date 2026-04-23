@@ -2,7 +2,7 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
-from processor import process_file
+from processor import run_processor
 from github_fetcher import fetch_github_issues
 from search import search_issues
 
@@ -21,7 +21,7 @@ app.add_middleware(
 
 class SearchRequest(BaseModel):
     query: str
-    limit: int = 3
+    limit: int
     
 @app.post("/sync")
 async def sync_docs(background_tasks: BackgroundTasks):
@@ -29,12 +29,9 @@ async def sync_docs(background_tasks: BackgroundTasks):
     def run_pipeline():
         input_dir= "./input_docs"
         
-        fetch_github_issues(output_dir=input_dir)
+        # fetch_github_issues(output_dir=input_dir)
         
-        if os.path.exists(input_dir):
-            for file_name in os.listdir(input_dir):
-                if file_name.endswith(('.txt', '.md')):
-                    process_file(os.path.join(input_dir, file_name))
+        run_processor()
                     
                     
     background_tasks.add_task(run_pipeline)

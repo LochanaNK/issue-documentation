@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: .
+    container_name: devdoc-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./docs_db:/app/docs_db
+      - ./input_docs:/app/input_docs
+    environment:
+      - OLLAMA_HOST=host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: >
+      bash -c "
+      echo 'Pre-loading Gemma model...' &&
+      curl -s -X POST http://host.docker.internal:11434/api/generate -d '{\"model\": \"gemma4:e4b\"}' > /dev/null &
+      echo 'Starting Uvicorn...' &&
+      exec uvicorn server:app --host 0.0.0.0 --port 8000 --reload --reload-exclude 'input_docs/*' --reload-exclude 'processed_docs/*' --reload-exclude 'docs_db/*'
+      "

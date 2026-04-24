@@ -105,7 +105,6 @@ def run_processor():
         
     doc_dir = "./input_docs"
     if os.path.exists(doc_dir):
-        fetch_github_issues(output_dir=doc_dir)
         files_to_process = [
             os.path.join(doc_dir, filename)
             for filename in os.listdir(doc_dir)

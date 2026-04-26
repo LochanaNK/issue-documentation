@@ -3,6 +3,9 @@ import os
 import json
 from concurrent.futures import ThreadPoolExecutor
 from time import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Use the token from your environment variables (Safe for Docker/PC)
 GITLAB_TOKEN = os.getenv("GITLAB_PRIVATE_TOKEN")
@@ -59,7 +62,7 @@ def fetch_gitlab_issues(output_dir="./input_docs"):
     try:
         gl = gitlab.Gitlab('https://gitlab.com', private_token=GITLAB_TOKEN)
         
-        print("📡 Connecting to GitLab API...")
+        print("\nᯤ Connecting to GitLab API...")
         projects = gl.projects.list(membership=True, limit=50)
         
         print(f"\n▷  Starting parallel GitLab sync for {len(projects)} projects...\n")

@@ -1,0 +1,19 @@
+# Web Server & API
+fastapi
+uvicorn[standard]
+pydantic
+
+# AI & Vector Database
+ollama
+chromadb
+# FORCE NUMPY TO 1.x TO FIX THE ATTRIBUTE ERROR
+numpy
+
+# GitHub & File Processing
+requests
+python-gitlab
+PyGithub
+
+# Performance & Utilities
+python-multipart
+python-dotenv

@@ -5,3 +5,4 @@ docs_db/
 .env
 _pycache__/
 *.pyc
+start_server.bat

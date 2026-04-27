@@ -1,4 +1,3 @@
-import subprocess
 from github import Github
 from dotenv import load_dotenv
 import json
@@ -85,9 +84,7 @@ def fetch_github_issues(output_dir="./input_docs"):
         print(f"⏱️  Time taken: {duration:.2f} seconds")
         print(f"✅ Total issues synced across all repos: {total_issues_synced}")
         print("="*30 + "\n")
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ CLI Error: {e.stderr}")
+        
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
 

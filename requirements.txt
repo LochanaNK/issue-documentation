@@ -1,16 +1,19 @@
 # Web Server & API
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-pydantic==2.5.3
+fastapi
+uvicorn[standard]
+pydantic
 
 # AI & Vector Database
-ollama==0.1.6
-chromadb==1.5.8
+ollama
+chromadb
 # FORCE NUMPY TO 1.x TO FIX THE ATTRIBUTE ERROR
-numpy<2.0.0
+numpy
 
 # GitHub & File Processing
-requests==2.31.0
+requests
+python-gitlab
+PyGithub
 
 # Performance & Utilities
-python-multipart==0.0.6
+python-multipart
+python-dotenv

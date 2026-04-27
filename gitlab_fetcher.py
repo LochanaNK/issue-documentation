@@ -7,29 +7,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Use the token from your environment variables (Safe for Docker/PC)
 GITLAB_TOKEN = os.getenv("GITLAB_PRIVATE_TOKEN")
 
 def process_single_gitlab_project(project, output_dir):
-    """Processes a single GitLab project and saves closed issues as text files."""
     synced_count = 0
     project_full_name = project.path_with_namespace
     
     try:
         print(f"⌕  Checking GitLab: {project_full_name}")
         
-        # Fetch closed issues for this specific project
         # get_all=True handles pagination automatically
         issues = project.issues.list(state='closed', get_all=True)
 
         for issue in issues:
-            # Create a safe filename (GitLab issues use iid for the number)
+            if issue.pull_request:
+                print(f"Skipping PR {issue.iid} of {project_full_name}")
+                continue
+     
             safe_name = project_full_name.replace("/", "-")
             issue_id = f"GL-{safe_name}-{issue.iid}"
             file_name = f"{issue_id}.txt"
             file_path = os.path.join(output_dir, file_name)
 
-            # Format content to match your GitHub style exactly
             content = (
                 f"SOURCE: GitLab Issue {project_full_name} #{issue.iid}\n"
                 f"URL: {issue.web_url}\n"

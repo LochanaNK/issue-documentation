@@ -20,10 +20,7 @@ def process_single_gitlab_project(project, output_dir):
         issues = project.issues.list(state='closed', get_all=True)
 
         for issue in issues:
-            if issue.pull_request:
-                print(f"Skipping PR {issue.iid} of {project_full_name}")
-                continue
-     
+                 
             safe_name = project_full_name.replace("/", "-")
             issue_id = f"GL-{safe_name}-{issue.iid}"
             file_name = f"{issue_id}.txt"

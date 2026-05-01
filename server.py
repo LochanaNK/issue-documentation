@@ -5,6 +5,7 @@ import os
 from processor import run_processor
 from github_fetcher import fetch_github_issues
 from gitlab_fetcher import fetch_gitlab_issues
+from jira_fetcher import fetch_jira_issues
 from search import search_issues
 import asyncio
 
@@ -41,6 +42,7 @@ async def sync_docs(background_tasks: BackgroundTasks):
             is_syncing = True
             fetch_gitlab_issues(output_dir=input_dir)
             fetch_github_issues(output_dir=input_dir)
+            fetch_jira_issues(output_dir=input_dir)
             
             run_processor()
         finally:

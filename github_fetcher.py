@@ -1,4 +1,3 @@
-import subprocess
 from github import Github
 from dotenv import load_dotenv
 import json
@@ -72,7 +71,7 @@ def fetch_github_issues(output_dir="./input_docs"):
         print(f"\n▷  Starting parallel sync for {len(repo_list)} repositories...\n")
         
         # max_workers=10 will crate 10 threads to process. 
-        # DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING. 
+        # DO NOT CHANGE THIS UNLESS REQUIRED. 
         # Setting it too high may cause rate limiting or performance issues.
         with ThreadPoolExecutor(max_workers=10) as executor:
             results = list(executor.map(lambda r: process_single_repo(r, output_dir), repo_list))
@@ -85,9 +84,7 @@ def fetch_github_issues(output_dir="./input_docs"):
         print(f"⏱️  Time taken: {duration:.2f} seconds")
         print(f"✅ Total issues synced across all repos: {total_issues_synced}")
         print("="*30 + "\n")
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ CLI Error: {e.stderr}")
+        
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
 

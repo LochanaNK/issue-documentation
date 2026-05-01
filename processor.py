@@ -2,15 +2,10 @@ import hashlib
 import json
 import ollama
 import os
-import chromadb
+from database import collection
 from datetime import datetime
 from time import time
 from concurrent.futures import ThreadPoolExecutor
-
-from github_fetcher import fetch_github_issues
-
-client = chromadb.PersistentClient(path="./docs_db")
-collection = client.get_or_create_collection(name="project_docs")
 
 output_dir = "./processed_docs"
 os.makedirs(output_dir, exist_ok=True)

@@ -2,12 +2,12 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
+from chat_service import chat_with_docs
 from processor import run_processor
 from github_fetcher import fetch_github_issues
 from gitlab_fetcher import fetch_gitlab_issues
 from jira_fetcher import fetch_jira_issues
 from search import search_issues
-import asyncio
 
 app = FastAPI(title="DevDoc API server")
 is_syncing = False
@@ -22,11 +22,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+class ChatRequest(BaseModel):
+    message: str
+    
 class SearchRequest(BaseModel):
     query: str
     limit: int
     
+@app.post('/chat')
+async def chat_bot(request: ChatRequest):
+    try:
+        response = chat_with_docs(request.message)
+        return {"response":response}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/sync")
 async def sync_docs(background_tasks: BackgroundTasks):
     global is_syncing
